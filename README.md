@@ -34,6 +34,7 @@ Usage
 <?= $form->field($model, $attribute)->widget(CheckBo::class, []) ?>
 ```
 
-##License
+License
+-------
 
 yii2-checkbo is released under the MIT License.
