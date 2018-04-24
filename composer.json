@@ -2,6 +2,7 @@
     "name": "rustamwin/yii2-checkbo",
     "description": "CheckBo widget for Yii2.",
     "type": "yii2-extension",
+    "version": "1.0",
     "keywords": [
         "yii",
         "yii2",
@@ -16,7 +17,7 @@
         {
             "name": "Rustam Mamadaminov",
             "email": "rmamdaminov@gmail.com",
-            "homepage": "http://www.activemedia.uz",
+            "homepage": "http://rustamwin.github.io",
             "role": "Developer"
         }
     ],
@@ -37,9 +38,6 @@
         }
     },
     "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        },
         "asset-installer-paths": {
             "bower-asset-library": "vendor/bower"
         }
