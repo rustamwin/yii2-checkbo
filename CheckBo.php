@@ -8,11 +8,11 @@
 namespace rustamwin\checkbo;
 
 
-use yii\base\InvalidParamException;
+use yii\base\InvalidArgumentException;
+use yii\bootstrap\InputWidget;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\Inflector;
-use yii\widgets\InputWidget;
 
 class CheckBo extends InputWidget
 {
@@ -20,31 +20,34 @@ class CheckBo extends InputWidget
     const TYPE_RADIO    = 'radio';
     const TYPE_SWITCH   = 'switch';
 
-    public $clientOptions = [];
-    public $type          = 'checkbox';
-    public $typeArray     = [
+    public    $clientOptions = [];
+    public    $items         = [];
+    public    $type          = 'checkbox';
+    protected $_typeArray    = [
         self::TYPE_CHECKBOX,
         self::TYPE_RADIO,
         self::TYPE_SWITCH,
     ];
+    protected $_label        = false;
 
     public function init()
     {
-        if (!in_array($this->type, $this->typeArray)) {
-            throw new InvalidParamException(__("Undefined type: {$this->type}"));
+        if (!in_array($this->type, $this->_typeArray)) {
+            throw new InvalidArgumentException(__("Undefined type: {$this->type}"));
         }
         if ($this->hasModel()) {
             $this->name  = Html::getInputName($this->model, $this->attribute);
             $this->value = Html::getAttributeValue($this->model, $this->attribute);
+        }
+        if ($this->hasModel() && $this->field) {
+            $this->_label = ArrayHelper::remove($this->field->labelOptions, 'label', false);
+            $this->field->label(false);
         }
         parent::init();
     }
 
     public function run()
     {
-        if ($this->hasModel() && $this->field) {
-            $this->field->label(false);
-        }
         $this->id = "checkBo_{$this->id}";
         $view     = $this->getView();
         CheckBoAsset::register($view);
@@ -52,15 +55,12 @@ class CheckBo extends InputWidget
         if ($this->type == self::TYPE_SWITCH) {
             Html::addCssClass($this->options['labelOptions'], 'switch switch-sm');
         } else {
-            $this->options['labelOptions'] = ['class' => "cb-{$this->type}"];
+            Html::addCssClass($this->options['labelOptions'], ['class' => "cb-{$this->type}"]);
         }
         if ($this->value) {
             Html::addCssClass($this->options['labelOptions'], 'checked');
         }
-        $this->field->options['id'] = $this->id;
-        $this->field->options       = array_merge($this->field->options, $this->clientOptions);
         $view->registerJs("jQuery('#{$this->id}').checkBo()");
-        //$this->registerClientEvents();
         echo $this->renderInputHtml($this->type);
     }
 
@@ -78,9 +78,9 @@ class CheckBo extends InputWidget
         $label  = Html::label($input . $label, null, $this->options['labelOptions']);
         if ($this->hasModel()) {
             $input = Html::activeCheckbox($this->model, $this->attribute, ArrayHelper::merge($this->options, $this->clientOptions));
-            return $input;
+            return Html::tag('div', $input, ['id' => $this->id]);
         }
-        return Html::tag('div', $hidden . $label, $this->field->options);
+        return Html::tag('div', $hidden . $label, ['id' => $this->id]);
     }
 
     protected function renderRadio()
@@ -91,21 +91,20 @@ class CheckBo extends InputWidget
         $label  = Html::label($input . $label, null, $this->options['labelOptions']);
         if ($this->hasModel()) {
             $input = Html::activeRadio($this->model, $this->attribute, $this->options);
-            return $input;
+            return Html::tag('div', $input, ['id' => $this->id]);
         }
-        return Html::tag('div', $hidden . $label, $this->field->options);
+        return Html::tag('div', $hidden . $label, ['id' => $this->id]);
     }
 
     protected function renderSwitch()
     {
         $labelOptions = $this->options['labelOptions'];
         unset($this->options['labelOptions']);
-        $hidden = Html::hiddenInput($this->name, 0);
-        $input  = Html::checkbox($this->name, $this->value, $this->options);
-        $input  .= Html::tag('span', "<i class='handle'></i>");
-        $label  = $this->hasModel()
-            ? Html::tag('p', $this->model->getAttributeLabel($this->attribute))
-            : '';
-        return $label . $hidden . Html::label($input, null, $labelOptions);
+        $labelOptions['id'] = $this->id;
+        $hidden             = $this->hasModel() ? Html::hiddenInput($this->name, 0) : '';
+        $input              = Html::checkbox($this->name, $this->value, $this->options);
+        $input              .= Html::tag('span', "<i class='handle'></i>");
+        $label              = $this->_label;
+        return $hidden . Html::label($input . $label, null, $labelOptions);
     }
 }

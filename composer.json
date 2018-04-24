@@ -11,7 +11,7 @@
         "checkBo"
     ],
     "homepage": "https://github.com/rustamwin/yii2-checkbo",
-    "license": "BSD-3-Clause",
+    "license": "MIT",
     "authors": [
         {
             "name": "Rustam Mamadaminov",
