@@ -1,5 +1,5 @@
-# CheckBo Widget for Yii2
-====================
+CheckBo Widget for Yii2
+=========================
 
 [![Latest Stable Version](https://poser.pugx.org/rustamwin/yii2-checkbo/v/stable)](https://packagist.org/packages/rustamwin/yii2-checkbo)
 [![Total Downloads](https://poser.pugx.org/rustamwin/yii2-checkbo/downloads)](https://packagist.org/packages/rustamwin/yii2-checkbo)
